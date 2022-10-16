@@ -60,27 +60,27 @@ ssize_t gpio_driver_write(struct file *file, const char __user *user, size_t siz
 	if (copy_from_user(data_buffer, user, size))
 		return 0;
 
-	printk("%s: Data buffer: %s\n", TAG, data_buffer);
+	printk("%s: Data buffer: %s", TAG, data_buffer);
 
 	if (sscanf(data_buffer, "%d,%d", &pin, &value) != 2)
 	{
-		printk("Inproper data format submitted\n");
+		printk("%s: Inproper data format submitted", TAG);
 		return size;
 	}
 
 	if (pin > 26 || pin < 0)
 	{
-		printk("Invalid pin number submitted\n");
+		printk("%s: Invalid pin number submitted", TAG);
 		return size;
 	}
 
 	if (value != 0 && value != 1)
 	{
-		printk("Invalid on/off value\n");
+		printk("%s: Invalid on/off value", TAG);
 		return size;
 	}
 
-	printk("You said pin %d, value %d\n", pin, value);
+	printk("%s: You said pin %d, value %d", TAG, pin, value);
 	if (value == 1)
 	{
 		gpio_pin_on(pin);
@@ -101,16 +101,16 @@ static const struct proc_ops gpio_driver_proc_fops =
 
 static int __init gpio_driver_init(void)
 {
-	printk("%s: GPIO Driver initialized!\n", TAG);
+	printk("%s: GPIO Driver initialized!", TAG);
 
 	gpio_registers = (int*)ioremap(BCM2711_GPIO_ADDRESS, PAGE_SIZE);
 	if (gpio_registers == NULL)
 	{
-		printk("Failed to map GPIO memory to driver\n");
+		printk("%s: Failed to map GPIO memory to driver", TAG);
 		return -1;
 	}
 
-	printk("Successfully mapped in GPIO memory\n");
+	printk("%s: Successfully mapped in GPIO memory", TAG);
 
 	// create an entry in the proc-fs
 	gpio_driver_proc = proc_create("gpio_control", 0666, NULL, &gpio_driver_proc_fops);
@@ -124,7 +124,7 @@ static int __init gpio_driver_init(void)
 
 static void __exit gpio_driver_exit(void)
 {
-	printk("Leaving my driver!\n");
+	printk("%s: Leaving my driver!", TAG);
 	iounmap(gpio_registers);
 	proc_remove(gpio_driver_proc);
 	return;
