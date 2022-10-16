@@ -7,3 +7,9 @@ all:
 
 clean:
 	make -C $(KDIR) M=$(shell pwd) clean
+
+install:
+	insmod gpio_driver.ko
+
+uninstall:
+	rmmod gpio_driver.ko
